@@ -36,21 +36,21 @@ class AuthorForm extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <div className="AddAuthorForm__input">
-                    <label htmlFor="name">Name</label>
-                    <input type="text" name="name" value={this.state.name} onChange={this.onFieldChange} />
+                <div className='AddAuthorForm_input'>
+                    <label htmlFor='name'>Name</label>
+                    <input type='text' name='name' value={this.state.name} onChange={this.onFieldChange}/>
                 </div>
-                <div className="AddAuthorForm__input">
-                    <label htmlFor="imageUrl">Image URL</label>
-                    <input type="text" name="imageUrl" value={this.state.imageUrl} onChange={this.onFieldChange} />
+                <div className='AddAuthorForm_input'>
+                    <label htmlFor='imageUrl'>Image Url</label>
+                    <input type='text' name='imageUrl' value={this.state.imageUrl} onChange={this.onFieldChange}/>
                 </div>
-                <div className="AddAuthorForm_input">
-                    <label htmlFor="bookTemp">Books</label>
+                <div className='AddAuthorForm_input'>
                     {this.state.books.map((book) => <p key={book}>{book}</p>)}
-                    <input type="text" name="bookTemp" value={this.state.bookTemp} onChange={this.onFieldChange}/>
-                    <input type="button" value="+" onClick={this.handleAddBook}/>
+                    <label htmlFor='bookTemp'>Books</label>
+                    <input type='text' name='bookTemp' value={this.state.bookTemp} onChange={this.onFieldChange}/>
+                    <input type='button' value='+' onClick={this.handleAddBook}/>
                 </div>
-                <input type="submit" value="Add"/>
+                <input type='submit' value='Add'/>
             </form>
         );
     }

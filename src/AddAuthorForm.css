@@ -3,10 +3,10 @@
     margin: 50px 10%;
 }
 
-.AddAuthorForm__input {
+.AddAuthorForm_input {
     margin-bottom: 20px;
 }
 
-.AddAuthorForm__input > label {
+.AddAuthorForm_input > label {
     display: block;
 }
