@@ -76,5 +76,5 @@ describe("Author Quiz", () => {
     it("should receive The Shining", () => {
       expect(handleAnswerSelected).toHaveBeenCalledWith("The Shining");
     });
-  })
+  });
 });
