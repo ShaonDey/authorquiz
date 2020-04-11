@@ -17,7 +17,7 @@ const state = {
     },
   },
   highlight: "none"
-}
+};
 
 describe("Author Quiz", () => {
   it("renders without crashing", () => {
