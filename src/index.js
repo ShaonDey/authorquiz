@@ -1,14 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import AuthorQuiz from "./AuthorQuiz";
+import * as serviceWorker from "./serviceWorker";
+
+const authors = [
+  {
+    name: "Mark Twain",
+    imageUrl: "images/authors/marktwain.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["Pirates Of The Caribbean", "The Lord Of The Rings", "The Hobbits"],
+  },
+];
+
+const state = {
+  turnData: {
+    author: authors[0],
+    books: authors[0].books,
+  },
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AuthorQuiz {...state} />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
