@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import "./AddAuthorForm.css";
 
 class AuthorForm extends React.Component {
@@ -11,10 +13,13 @@ class AuthorForm extends React.Component {
       bookTemp: ""
     };
     this.onFieldChange = this.onFieldChange.bind(this);
-    this.handleAddBook = this.handleAddBook.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleAddBook = this.handleAddBook.bind(this);
   }
-
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.onAddAuthor(this.state);
+  }
   onFieldChange(event) {
     this.setState({
       [event.target.name]: event.target.value
@@ -26,15 +31,10 @@ class AuthorForm extends React.Component {
       bookTemp: ""
     });
   }
-  handleSubmit(event) {
-    event.preventDefault();
-    this.props.onAddAuthor(this.state);
-  }
-
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="AddAuthorForm_input">
+        <div className="AddAuthorForm__input">
           <label htmlFor="name">Name</label>
           <input
             type="text"
@@ -43,8 +43,8 @@ class AuthorForm extends React.Component {
             onChange={this.onFieldChange}
           />
         </div>
-        <div className="AddAuthorForm_input">
-          <label htmlFor="imageUrl">Image Url</label>
+        <div className="AddAuthorForm__input">
+          <label htmlFor="imageUrl">Image URL</label>
           <input
             type="text"
             name="imageUrl"
@@ -52,11 +52,11 @@ class AuthorForm extends React.Component {
             onChange={this.onFieldChange}
           />
         </div>
-        <div className="AddAuthorForm_input">
+        <div className="AddAuthorForm__input">
+          <label htmlFor="bookTemp">Books</label>
           {this.state.books.map(book => (
             <p key={book}>{book}</p>
           ))}
-          <label htmlFor="bookTemp">Books</label>
           <input
             type="text"
             name="bookTemp"
@@ -80,4 +80,18 @@ function AddAuthorForm({ match, onAddAuthor }) {
   );
 }
 
-export default AddAuthorForm;
+function mapDispatchToProps(dispatch, props) {
+  return {
+    onAddAuthor: author => {
+      dispatch({ type: "ADD_AUTHOR", author });
+      props.history.push("/");
+    }
+  };
+}
+
+export default withRouter(
+  connect(
+    () => {},
+    mapDispatchToProps
+  )(AddAuthorForm)
+);

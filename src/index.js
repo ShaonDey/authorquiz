@@ -1,60 +1,52 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, withRouter } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
+import * as Redux from "redux";
+import * as ReactRedux from "react-redux";
 import "./index.css";
 import AuthorQuiz from "./AuthorQuiz";
 import AddAuthorForm from "./AddAuthorForm";
-import * as serviceWorker from "./serviceWorker";
+import registerServiceWorker from "./registerServiceWorker";
 import { shuffle, sample } from "underscore";
 
 const authors = [
   {
     name: "Mark Twain",
     imageUrl: "images/authors/marktwain.jpg",
-    imageSource: "Wkimedia Commons",
-    books: [
-      "The Adventures of Huckleberry Finn",
-      "Life on the Mississippi",
-      "Roughing"
-    ]
+    imageSource: "Wikimedia Commons",
+    books: ["The Adventures of Huckleberry Finn"]
   },
   {
-    name: "JK Rowling",
-    imageUrl: "images/authors/jk.jpg",
-    imageSource: "Wkimedia Commons",
-    books: [
-      "Harry Potter and the Philosophers Stone",
-      "The Tales of Beedle the Bard",
-      "Fantastic Beasts and Where to Find Them"
-    ]
+    name: "Joseph Conrad",
+    imageUrl: "images/authors/josephconrad.png",
+    imageSource: "Wikimedia Commons",
+    books: ["Heart of Darkness"]
+  },
+  {
+    name: "J.K. Rowling",
+    imageUrl: "images/authors/jkrowling.jpg",
+    imageSource: "Wikimedia Commons",
+    imageAttribution: "Daniel Ogren",
+    books: ["Harry Potter and the Sorcerers Stone"]
+  },
+  {
+    name: "Stephen King",
+    imageUrl: "images/authors/stephenking.jpg",
+    imageSource: "Wikimedia Commons",
+    imageAttribution: "Pinguino",
+    books: ["The Shining", "IT"]
+  },
+  {
+    name: "Charles Dickens",
+    imageUrl: "images/authors/charlesdickens.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["David Copperfield", "A Tale of Two Cities"]
   },
   {
     name: "William Shakespeare",
-    imageUrl: "images/authors/ws.jpg",
-    imageSource: "Wkimedia Commons",
-    books: ["Romeo and Juliette", "Macbeth", "The Merry Wives of Windsor"]
-  },
-  {
-    name: "Gloria Fuertes",
-    imageUrl: "images/authors/gf.jpg",
-    imageSource: "Wkimedia Commons",
-    books: ["Songs for kids", "The months", "Ponytail the poet"]
-  },
-  {
-    name: "Ernest Hemingway",
-    imageUrl: "images/authors/eh.jpg",
-    imageSource: "Wkimedia Commons",
-    books: [
-      "The Torrents of Spring",
-      "Islands in the Stream",
-      "The Garden of Eden"
-    ]
-  },
-  {
-    name: "León Tolstói",
-    imageUrl: "images/authors/lt.jpg",
-    imageSource: "Wkimedia Commons",
-    books: ["War & Peace", "Anna Karenina", "Resurrection"]
+    imageUrl: "images/authors/williamshakespeare.jpg",
+    imageSource: "Wikimedia Commons",
+    books: ["Hamlet", "Macbeth", "Romeo and Juliet"]
   }
 ];
 
@@ -62,7 +54,6 @@ function getTurnData(authors) {
   const allBooks = authors.reduce(function(p, c, i) {
     return p.concat(c.books);
   }, []);
-
   const fourRandomBooks = shuffle(allBooks).slice(0, 4);
   const answer = sample(fourRandomBooks);
 
@@ -72,58 +63,47 @@ function getTurnData(authors) {
   };
 }
 
-function onAnswerSelected(answer) {
-  const isCorrect = state.turnData.author.books.some(book => book === answer);
-  state.highlight = isCorrect ? "correct" : "wrong";
-  render();
+function reducer(
+  state = { authors, turnData: getTurnData(authors), highlight: "" },
+  action
+) {
+  switch (action.type) {
+    case "ANSWER_SELECTED":
+      const isCorrect = state.turnData.author.books.some(
+        book => book === action.answer
+      );
+      return Object.assign({}, state, {
+        highlight: isCorrect ? "correct" : "wrong"
+      });
+    case "CONTINUE":
+      return Object.assign({}, state, {
+        highlight: "",
+        turnData: getTurnData(state.authors)
+      });
+    case "ADD_AUTHOR":
+      return Object.assign({}, state, {
+        authors: state.authors.concat([action.author])
+      });
+    default:
+      return state;
+  }
 }
 
-function App() {
-  return (
-    <AuthorQuiz
-      {...state}
-      onAnswerSelected={onAnswerSelected}
-      onContinue={() => {
-        state = resetState();
-      }}
-    />
-  );
-}
+let store = Redux.createStore(
+  reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
-function resetState() {
-  return {
-    turnData: getTurnData(authors),
-    highlight: ""
-  };
-}
+ReactDOM.render(
+  <BrowserRouter>
+    <ReactRedux.Provider store={store}>
+      <React.Fragment>
+        <Route exact path="/" component={AuthorQuiz} />
+        <Route path="/add" component={AddAuthorForm} />
+      </React.Fragment>
+    </ReactRedux.Provider>
+  </BrowserRouter>,
+  document.getElementById("root")
+);
 
-let state = resetState();
-
-const AuthorWrapper = withRouter(({ history }) => (
-  <AddAuthorForm
-    onAddAuthor={author => {
-      authors.push(author);
-      history.push("/");
-    }}
-  />
-));
-
-function render() {
-  ReactDOM.render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <React.Fragment>
-          <Route exact path="/" component={App} />
-          <Route path="/add" component={AuthorWrapper} />
-        </React.Fragment>
-      </BrowserRouter>
-    </React.StrictMode>,
-    document.getElementById("root")
-  );
-}
-
-render();
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+registerServiceWorker();
